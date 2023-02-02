@@ -4,21 +4,19 @@ void main() {
   runApp(const MyApp());
 }
 
-bool colourBool = true;
-const Color blue = Colors.blue;
-const Color green = Colors.green;
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  static const String _title = "Colour and Name App";
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: _title,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: _title),
     );
   }
 }
@@ -32,22 +30,9 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class Game {
-  final String name;
-  final String description;
-
-  const Game(this.name, this.description);
-}
-
-List<Game> gameList = [
-  const Game("World of Warcraft", "Bad game lul"),
-  const Game("Final Fantasy XIV", "Gud game lul"),
-  const Game("Guild Wars 2", "It's a game, alright")
-];
-
 class _MyHomePageState extends State<MyHomePage> {
-  Game? _game = gameList[0];
-  String gameString = 'World of Warcraft';
+  String inputText = "Name: ";
+  Color chosenColour = Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -59,26 +44,40 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            for (var game in gameList)
-              ListTile(
-                  title: Text(game.name),
-                  leading: Radio<Game>(
-                    value: game,
-                    groupValue: _game,
-                    onChanged: (Game? value) {
-                      setState(() {
-                        gameString = game.name;
-                        _game = value;
-                      });
-                    },
-                  )),
-            Text('The chosen game is $gameString'),
+            const Text("Get ones identity"),
             ElevatedButton(
-              child: const Text('Open route'),
-              onPressed: () {
-                _navigateAndDisplaySelection(context, _game);
-              },
+                onPressed: () {
+                  _navigateAndGetIdentity(context).then((value) {
+                    setState(() {
+                      if (value[0] != "" && value[1] != "") {
+                        inputText = "${value[0]}'s name: ${value[1]}";
+                      }
+                    });
+                  });
+                },
+                child: const Text("Get identity")),
+            Flexible(
+              child: FractionallySizedBox(
+                widthFactor: 1,
+                heightFactor: 0.2,
+                child: Container(
+                    color: chosenColour,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(inputText),
+                        ])),
+              ),
             ),
+            ElevatedButton(
+                onPressed: () {
+                  _navigateAndGetColour(context).then((value) {
+                    setState(() {
+                      chosenColour = value;
+                    });
+                  });
+                },
+                child: const Text("Get ones colour")),
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -86,47 +85,141 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class FirstRoute extends StatelessWidget {
-  const FirstRoute({super.key});
+class ColourScreen extends StatefulWidget {
+  const ColourScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('First Route'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          child: const Text('Open route'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
+  State<ColourScreen> createState() => _ColourScreenState();
 }
 
-class DetailScreen extends StatelessWidget {
-  const DetailScreen({super.key, required this.game});
+class _ColourScreenState extends State<ColourScreen> {
+  Color colourCombination = Colors.black;
+  String dropDownValue1 = "00";
+  String dropDownValue2 = "00";
+  String dropDownValue3 = "00";
 
-  final Game? game;
+  List<String> items = [
+    "00",
+    "10",
+    "20",
+    "30",
+    "40",
+    "50",
+    "60",
+    "70",
+    "80",
+    "90",
+    "A0",
+    "B0",
+    "C0",
+    "D0",
+    "E0",
+    "F0",
+    "FF"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(game!.name),
+        title: const Text("Choose colour"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(game!.description),
+            // TODO: Add identity transfer to finish assignment
+            SizedBox(
+              width: 300.0,
+              height: 100.0,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: colourCombination),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                DropdownButton(
+                  // Initial Value
+                  value: dropDownValue1,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropDownValue1 = newValue!;
+                      colourCombination = Color(int.parse(
+                          "0xFF$dropDownValue1$dropDownValue2$dropDownValue3"));
+                    });
+                  },
+                ),
+                DropdownButton(
+                  // Initial Value
+                  value: dropDownValue2,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropDownValue2 = newValue!;
+                      colourCombination = Color(int.parse(
+                          "0xFF$dropDownValue1$dropDownValue2$dropDownValue3"));
+                    });
+                  },
+                ),
+                DropdownButton(
+                  // Initial Value
+                  value: dropDownValue3,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropDownValue3 = newValue!;
+                      colourCombination = Color(int.parse(
+                          "0xFF$dropDownValue1$dropDownValue2$dropDownValue3"));
+                    });
+                  },
+                ),
+              ],
+            ),
             ElevatedButton(
-              child: const Text("Go back"),
+              child: const Text("Send"),
               onPressed: () {
-                Navigator.pop(context, "${game!.name} was accessed");
+                //Navigator.pop(context, colourCombination);
+                setState(() {
+                  Navigator.pop(context, colourCombination);
+                });
               },
             )
           ],
@@ -136,16 +229,128 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-Future<void> _navigateAndDisplaySelection(
-    BuildContext context, Game? game) async {
+class NameScreen extends StatefulWidget {
+  const NameScreen({super.key});
+
+  @override
+  State<NameScreen> createState() => _NameScreen();
+}
+
+class _NameScreen extends State<NameScreen> {
+  String? name = '';
+  String? identity = '';
+  final TextEditingController textController = TextEditingController();
+
+  static const snackBar = SnackBar(
+    content: Text('Please choose an identity and a name...'),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Choose identity"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text("Choose identity"),
+            RadioListTile(
+              title: const Text("Mother"),
+              value: "Mother",
+              groupValue: identity,
+              onChanged: (value) {
+                setState(() {
+                  identity = value;
+                });
+              },
+            ),
+            RadioListTile(
+              title: const Text("Father"),
+              value: "Father",
+              groupValue: identity,
+              onChanged: (value) {
+                setState(() {
+                  identity = value;
+                });
+              },
+            ),
+            RadioListTile(
+              title: const Text("Cat"),
+              value: "Cat",
+              groupValue: identity,
+              onChanged: (value) {
+                setState(() {
+                  identity = value;
+                });
+              },
+            ),
+            RadioListTile(
+              title: const Text("Dog"),
+              value: "Dog",
+              groupValue: identity,
+              onChanged: (value) {
+                setState(() {
+                  identity = value;
+                });
+              },
+            ),
+            if (identity != "") Text("$identity's name:"),
+            TextField(
+                controller: textController,
+                onChanged: (value) {
+                  setState(() {
+                    name = value;
+                  });
+                }),
+            ElevatedButton(
+              child: const Text("Send"),
+              onPressed: () {
+                if (identity == "" || name == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                } else {
+                  Navigator.pop(context, [identity, name]);
+                }
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Future<List<String?>> _navigateAndGetIdentity(BuildContext context) async {
   final result = await Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => DetailScreen(game: game)),
+    MaterialPageRoute(builder: (context) => const NameScreen()),
   );
 
   if (context.mounted) {
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('$result')));
+    try {
+      return result;
+    } catch (e) {
+      return ["", ""];
+    }
   }
+
+  return ["No identity", "No name"];
+}
+
+Future<Color> _navigateAndGetColour(BuildContext context) async {
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const ColourScreen()),
+  );
+
+  if (context.mounted) {
+    try {
+      return result;
+    } catch (e) {
+      return Colors.white;
+    }
+  }
+
+  return Colors.white;
 }
