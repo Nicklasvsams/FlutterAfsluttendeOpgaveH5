@@ -144,21 +144,14 @@ class _ColourScreenState extends State<ColourScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 DropdownButton(
-                  // Initial Value
                   value: dropDownValue1,
-
-                  // Down Arrow Icon
                   icon: const Icon(Icons.keyboard_arrow_down),
-
-                  // Array list of items
                   items: items.map((String items) {
                     return DropdownMenuItem(
                       value: items,
                       child: Text(items),
                     );
                   }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
                   onChanged: (String? newValue) {
                     setState(() {
                       dropDownValue1 = newValue!;
@@ -168,21 +161,14 @@ class _ColourScreenState extends State<ColourScreen> {
                   },
                 ),
                 DropdownButton(
-                  // Initial Value
                   value: dropDownValue2,
-
-                  // Down Arrow Icon
                   icon: const Icon(Icons.keyboard_arrow_down),
-
-                  // Array list of items
                   items: items.map((String items) {
                     return DropdownMenuItem(
                       value: items,
                       child: Text(items),
                     );
                   }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
                   onChanged: (String? newValue) {
                     setState(() {
                       dropDownValue2 = newValue!;
@@ -192,21 +178,14 @@ class _ColourScreenState extends State<ColourScreen> {
                   },
                 ),
                 DropdownButton(
-                  // Initial Value
                   value: dropDownValue3,
-
-                  // Down Arrow Icon
                   icon: const Icon(Icons.keyboard_arrow_down),
-
-                  // Array list of items
                   items: items.map((String items) {
                     return DropdownMenuItem(
                       value: items,
                       child: Text(items),
                     );
                   }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
                   onChanged: (String? newValue) {
                     setState(() {
                       dropDownValue3 = newValue!;
@@ -220,7 +199,6 @@ class _ColourScreenState extends State<ColourScreen> {
             ElevatedButton(
               child: const Text("Send"),
               onPressed: () {
-                //Navigator.pop(context, colourCombination);
                 setState(() {
                   Navigator.pop(context, colourCombination);
                 });
