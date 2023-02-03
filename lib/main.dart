@@ -31,6 +31,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String? name = "";
+  String? identity = "";
   String inputText = "Name: ";
   Color chosenColour = Colors.white;
 
@@ -50,7 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   _navigateAndGetIdentity(context).then((value) {
                     setState(() {
                       if (value[0] != "" && value[1] != "") {
-                        inputText = "${value[0]}'s name: ${value[1]}";
+                        identity = value[0];
+                        name = value[1];
+                        inputText = "$identity's name: $name";
                       }
                     });
                   });
@@ -71,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  _navigateAndGetColour(context).then((value) {
+                  _navigateAndGetColour(context, identity).then((value) {
                     setState(() {
                       chosenColour = value;
                     });
@@ -86,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class ColourScreen extends StatefulWidget {
-  const ColourScreen({super.key});
+  final String? identity;
+  const ColourScreen({super.key, required this.identity});
 
   @override
   State<ColourScreen> createState() => _ColourScreenState();
@@ -122,13 +127,12 @@ class _ColourScreenState extends State<ColourScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Choose colour"),
+        title: Text("Choose colour for ${widget.identity}"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // TODO: Add identity transfer to finish assignment
             SizedBox(
               width: 300.0,
               height: 100.0,
@@ -227,6 +231,32 @@ class _ColourScreenState extends State<ColourScreen> {
       ),
     );
   }
+}
+
+Future<Color> _navigateAndGetColour(
+    BuildContext context, String? identity) async {
+  const snackBar = SnackBar(
+    content: Text(
+        'Please choose an identity and a name before choosing a colour...'),
+  );
+
+  if (identity == "") {
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    return Colors.white;
+  }
+
+  final result = await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ColourScreen(identity: identity!.toLowerCase())));
+
+  if (context.mounted) {
+    try {
+      return result;
+    } catch (e) {
+      return Colors.white;
+    }
+  }
+
+  return Colors.white;
 }
 
 class NameScreen extends StatefulWidget {
@@ -336,21 +366,4 @@ Future<List<String?>> _navigateAndGetIdentity(BuildContext context) async {
   }
 
   return ["No identity", "No name"];
-}
-
-Future<Color> _navigateAndGetColour(BuildContext context) async {
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ColourScreen()),
-  );
-
-  if (context.mounted) {
-    try {
-      return result;
-    } catch (e) {
-      return Colors.white;
-    }
-  }
-
-  return Colors.white;
 }
